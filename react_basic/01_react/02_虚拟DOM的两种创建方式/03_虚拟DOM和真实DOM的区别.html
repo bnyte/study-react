@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03_虚拟DOM和真实DOM的区别</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建ReactDOM
+        // 使用JSX方式创建标签时，如果有多行标签可以使用`()`括住
+        const VDOM = (
+            <h1 id="title">
+                <span id="bnyte">HelloReact</span>
+            </h1>
+        )
+        const appObject = document.getElementById("app")
+        console.log("虚拟dom的元素 >> ", VDOM)
+        console.log("真实DOM的元素 >> ", appObject)
+        
+        ReactDOM.render(VDOM, document.getElementById("app"))
+
+    </script>
+</body>
+</html>
