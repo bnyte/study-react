@@ -113,7 +113,7 @@ prop-types.js
 1. 他们都是对象, 并且不是集合等其他的对象, 只是一个简单的Objct对象
 2. 虚拟DOM的对象信息相对于真实DOM对象来说，他的信息比真实DOM更少
 
-![](./note_image/02.png)
+![02](./note_image/02.png)
 
 # JSX的语法规则
 
@@ -138,3 +138,82 @@ prop-types.js
 </script>
 ```
 
+> 获取css中的样式
+
+```javascript
+<script type="text/babel">
+    
+    // 创建ReactDOM
+    /*
+        *  引入css样式直接写即可, 但是不推荐因为这是错误的写法，这样的话会抛出异常
+        *  `Invalid DOM property `class`. Did you mean `className`?`，也就是说我们应该是用`className`属性来指定样式
+        */
+    const VDOM = (
+        <h1>
+            <span className="title" id="bnyte">name &gt;&gt; {name}</span>
+            <br />
+            <span >age &gt;&gt; {age}</span>
+            <br />
+            <span>arr &gt;&gt; {arr}</span>
+        </h1>
+    )
+
+    // 渲染React
+    ReactDOM.render(VDOM, document.getElementById("app"))
+</script>
+```
+
+```html
+<style>
+    .title{
+        background-color: palevioletred;
+        width: 20px;
+    }
+</style>
+```
+
+> 小Demo, 遍历
+
+```javascript
+<script type="text/babel">
+    
+    // 定义常量
+    const users = ["ggboy", "bnyte", "大帅哥"]
+
+    // 需要注意的是每个相同的标签都应该有一个唯一的key属性, React就是通过这个key来获取不同的标签
+    const VDOM = (
+        <ul>
+            {
+                users.map((value, index) => {
+                    return <li key={index}>{value}</li>
+                })
+            }
+        </ul>
+    )
+
+    // 获取容器
+    ReactDOM.render(VDOM, document.getElementById("app"))
+</script>
+```
+
+## 小结
+
+> 引入css样式直接写即可, 但是不推荐因为这是错误的写法，这样的话会抛出异常`Invalid DOM property `class`. Did you mean `className`?`，也就是说我们应该是用`className`属性来指定样式
+
+> 需要注意的是每个相同的标签都应该有一个唯一的key属性, React就是通过这个key来获取不同的标签
+
+# 面向组件编程
+
+> 函数式组件
+
+```javascript
+<script type="text/babel">
+    // 创建函数式组件
+    function Demo() {
+        return <h1>这是函数式组件编程</h1>
+    }
+    // 引用函数式组件, 需要注意的是引用函数式组件的时候必须使用标签的方式引入并且首字母必须大写，并且标签必须闭合
+    ReactDOM.render(<Demo/>, document.getElementById("app"))
+
+</script>
+```

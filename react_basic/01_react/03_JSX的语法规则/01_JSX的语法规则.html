@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>01_JSX的语法规则</title>
 </head>
+<style>
+    .title{
+        background-color: palevioletred;
+        width: 20px;
+    }
+</style>
 <body>
     <!-- React操作容器 -->
     <div id="app"></div>
@@ -24,27 +30,29 @@
         const arr = [1, 3, 5, 7, 8]
         
         // 创建ReactDOM
+        /*
+         *  引入css样式直接写即可, 但是不推荐因为这是错误的写法，这样的话会抛出异常
+         *  `Invalid DOM property `class`. Did you mean `className`?`，也就是说我们应该是用`className`属性来指定样式
+         * 引入内联样式需要使用 `{{key: "value", key:"value"}}`引入，需要注意的是在原始的css用的是-分割而在这里是驼峰
+         * jsx不能包含多个跟标签
+         * 标签必须要闭合, 这和HTML不同的是他不会自动补齐，也就是说没有纠错功能
+         * 1. 如果写标签的时候首字母用的是小写那么则会去HTML中寻找，如果找不到则会报错，
+         * 2. 如果写标签的时候首字母用的是大写则会去React组件中找，那么如果没找到依然会报错
+         * 
+         */
         const VDOM = (
             <h1>
-                <span>name &gt;&gt; {name}</span>
+                <span className="title" id="bnyte">name &gt;&gt; {name}</span>
                 <br />
-                <span >age &gt;&gt; {age}</span>
+
+                <span style={{color: "pink", fontSize: "28px"}}>age &gt;&gt; {age}</span>
                 <br />
                 <span>arr &gt;&gt; {arr}</span>
             </h1>
         )
-        /*
-        {
-	"phoneNo": "18820202021",
-	"name": "猪猪侠",
-	"identityNo": "150921197711287796",
-	"encryptPwd": ""
-}
-        */
 
         // 渲染React
         ReactDOM.render(VDOM, document.getElementById("app"))
-
     </script>
 </body>
 </html>
