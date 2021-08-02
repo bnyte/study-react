@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        /**
+         * 1. 在类组件中的state不能直接使用`setState`的API去进行赋值，主要原因是因为所有的对象都是通过类的构造器初始化, 
+         *      而我在构造器中调用了`this.state = this.setState()`因为此时的`HelloComponent`还没有完成实例化, 这个时候调用`setState()`会抛出空指针。
+         * 2. 需要注意的是不要在render()中去调用`setState()`因为在React中每次调用`setState()`都会调用当前实例的`render()`而我又在`runder()`中调用了`setState()`所以导致压栈, 因该和栈溢出等价吧
+         * 3. 在`构造器`和`render()`中的`this`是会指向当前实例对象的, 也就是说在这两个方法中我调用this可以拿到实例对象中的数据比如`state`等，但是在其他的方法中无法拿到当前this
+         * 4. `render()`是`React`渲染虚拟DOM成为真实DOM的方法, 也就是说所有的对虚拟DOM操作最后都会调用render()被React给渲染成为真实DOM然后在页面中展示
+         * 5. 在JavaScript中当调用方法时如果带了括号则是执行方法, 如果不带括号则是拿该方法的地址值然后作为返回值供接收使用，就算是已经吧当前方法的地址引用交给了一个变量，但是这个变量在调用的时候依然需要添加括号，否则还是返回地址值并不会调用。
+         * 6. React的元素不仅可以是虚拟DOM也可以是一个组件。
+         * 7. 在React中调用同类中的方法时候如果绑定时间调用方法那么需要将传统JS中的事件名称转换为驼峰，然后值为固定模式：`{functionName}`，如绑定点击事件的目标执行方法look：onClick={look}
+         */
+        class HelloComponent extends React.Component {
+
+            constructor(props) {
+                super(props)
+                this.state = {"date": new Date(), "userName": "猪猪侠", "isLook": true, "lookName": "帝皇铠甲"}
+                // 前面的是定义属性, 后面是找当前类的原型对象中是否包含
+                // 这一行主要解决this指针问题, 原理就是赋值改变this指向，也就是说获取当前类的原型中的look函数，然后绑定当前this指向给这个原型对象中，然后将返回值又赋值给了定义类的属性this.look
+                this.look = this.look.bind(this) 
+            }
+
+            render() {
+                return (
+                    <h1 onClick={this.look}>
+                        {
+                            this.state.isLook ? this.state.lookName : this.state.userName
+                        }
+                    </h1>
+                )
+            }
+
+            look() {
+                this.setState({"isLook": !this.state.isLook})
+                this.state.isLook ? this.state.lookName : this.state.userName
+                console.log(this.state.isLook);
+            }
+        }
+
+        ReactDOM.render(<HelloComponent />, document.getElementById("app"))
+
+    </script>
+</body>
+</html>

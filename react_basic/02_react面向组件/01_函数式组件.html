@@ -20,9 +20,13 @@
     <script type="text/babel">
         // 创建函数式组件
         function Demo() {
-            return <h1>这是函数式组件编程</h1>
+            // return <h1>这是函数式组件编程</h1>
+            console.log("hahhah");
+            return "哈哈"
         }
         // 引用函数式组件, 需要注意的是引用函数式组件的时候必须使用标签的方式引入并且首字母必须大写，并且标签必须闭合
+        // 这个时候在函数式组件中的数据不在是一个虚拟DOM，他是一个函数式组件的返回值，通过这个返回值作为虚拟DOM
+        // 如果组件之间返回了字符串之类的数据而并不是虚拟DOM的话那么则会将所有的数据全部直接生成为DOM元素不做任何操作。
         ReactDOM.render(<Demo/>, document.getElementById("app"))
 
     </script>
