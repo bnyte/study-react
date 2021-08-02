@@ -222,3 +222,59 @@ prop-types.js
 
 > 类式组件-复杂组件(有状态组件)
 
+```javascript
+<script type="text/babel">
+    /**
+     * 1. 在构造器中没有初始化state的情况下，在类组件函数(方法)中的state不能直接使用`setState`的API去进行赋值，主要原因是因为所有的对象都是通过类的构造器初始化, 
+     *      而我在构造器中调用了`this.state = this.setState()`因为此时的`HelloComponent`还没有完成实例化, 这个时候调用`setState()`会抛出空指针。
+     * 2. 需要注意的是不要在render()中去调用`setState()`因为在React中每次调用`setState()`都会调用当前实例的`render()`而我又在`runder()`中调用了`setState()`所以导致压栈, 因该和栈溢出等价吧
+     * 3. 在`构造器`和`render()`中的`this`是会指向当前实例对象的, 也就是说在这两个方法中我调用this可以拿到实例对象中的数据比如`state`等，但是在其他的方法中无法拿到当前this
+     * 4. `render()`是`React`渲染虚拟DOM成为真实DOM的方法, 也就是说所有的对虚拟DOM操作最后都会调用render()被React给渲染成为真实DOM然后在页面中展示
+     * 5. 在JavaScript中当调用方法时如果带了括号则是执行方法, 如果不带括号则是拿该方法的地址值然后作为返回值供接收使用，就算是已经吧当前方法的地址引用交给了一个变量，但是这个变量在调用的时候依然需要添加括号，否则还是返回地址值并不会调用。
+     * 6. React的元素不仅可以是虚拟DOM也可以是一个组件。
+     * 7. 在React中调用同类中的方法时候如果绑定时间调用方法那么需要将传统JS中的事件名称转换为驼峰，然后值为固定模式：`{functionName}`，如绑定点击事件的目标执行方法look：onClick={look}
+     * 8. 在React虚拟DOM中不可以直接放入对象类型的模板，必须放置字符串形式的数据。
+     * 9. 在React中的`setState()`是追加方式更新值，类似与`Java中的Map`集合的`put()`
+     */
+    class HelloComponent extends React.Component {
+
+        constructor(props) {
+            super(props)
+            this.state = {"date": new Date(), "userName": "猪猪侠", "isLook": true, "lookName": "帝皇铠甲"}
+            // 前面的是定义属性, 后面是找当前类的原型对象中是否包含
+            // 这一行主要解决this指针问题, 原理就是赋值改变this指向，也就是说获取当前类的原型中的look函数，然后绑定当前this指向给这个原型对象中，然后将返回值又赋值给了定义类的属性this.look
+            this.look = this.look.bind(this) 
+        }
+
+        render() {
+            // 不能直接将date对象放入React虚拟DOM中，必须放置一个字符串，否则React是无法完成解析的
+            const currentTime = new Date().toDateString()
+            return (
+                <h1 onClick={this.look}>
+                    现在是 {currentTime}
+                    {
+                        this.state.isLook ? this.state.lookName : this.state.userName
+                    }
+                </h1>
+            )
+        }
+
+        look() {
+            this.setState({"isLook": !this.state.isLook})
+            this.state.isLook ? this.state.lookName : this.state.userName
+            console.log(this.state.isLook);
+        }
+    }
+
+    ReactDOM.render(<HelloComponent />, document.getElementById("app"))
+
+</script>
+```
+
+## 小结
+
+- 在React中不能直接将对象数据类型放到虚拟DOM中让他渲染，React只认识字符串而不认识任何对象，它只认识虚拟DOM和字符串。
+- 在React中如果在构造器中调用`setState()`API是不可以的，因为他会通过原型链去找，但是找到当前组件的实例没有就会去React的组件跟父类找，但是因为默认在函数中使用严格模式的所以此时调用会出现空指针。
+- 在React中所有类组件必须继承`React.Component`这个类。
+- 在React中的组件有一个`render()`这是React将`render()`的返回值作为虚拟DOM，然后将这个虚拟DOM转换为真实的DOM对象，需要注意的是：每调用一次`setState()`API都会隐式调用一次`render()`
+- 在React中的`setState()`是追加方式更新值，类似与`Java中的Map`集合的`put()`
