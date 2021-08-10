@@ -8,7 +8,9 @@
 </head>
 <body>
     <!-- React操作容器 -->
-    <div id="app"></div>
+    <div id="app00"></div>
+    <div id="app01"></div>
+    <div id="app02"></div>
     
     <!-- 引入react的核心库 -->
     <script src="../../js/react.development.js" type="text/javascript"></script>
@@ -20,29 +22,25 @@
     <script type="text/babel">
         // 创建组件
         class Person extends React.Component {
-
+  
             // 渲染虚拟DOM核心方法
             render() {
                 return (
                     <div>
                         <ul>
-                            <li>姓名：猪猪侠</li>
-                            <li>性别：男</li>
-                            <li>年龄：3</li>
+                            <li>姓名：{this.props.name}</li>
+                            <li>性别：{this.props.gender}</li>
+                            <li>年龄：{this.props.age}</li>
                         </ul>
-                        <ul>
-                            <li>姓名：帝皇铠甲</li>
-                            <li>性别：男</li>
-                            <li>年龄：13</li>
-                        </ul>    
                     </div>
-
                 )
             }
         }
 
         // 渲染虚拟DOM
-        ReactDOM.render(<Person />, document.getElementById("app"))
+        ReactDOM.render(<Person name="猪猪侠" gender="男" age="18"/>, document.getElementById("app00"))
+        ReactDOM.render(<Person name="帝皇铠甲" gender="女" age="15"/>, document.getElementById("app01"))
+        ReactDOM.render(<Person name="霹雳火" gender="男" age="20"/>, document.getElementById("app02"))
 
     </script>
 </body>
