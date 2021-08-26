@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    <div id="app01"></div>
+    <div id="app02"></div>
+    
+    <!-- 引入react的核心库 -->·
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Person extends React.Component {
+  
+            // 渲染虚拟DOM核心方法
+            render() {
+                console.log(this.props);
+                const {name, gender, age} = this.props
+                return (
+                    <div>
+                        <ul>
+                            <li>姓名：{this.props.name}</li>
+                            <li>性别：{this.props.gender}</li>
+                            <li>年龄：{this.props.age + 1}</li>
+                        </ul>
+                    </div>
+                )
+            }
+        }
+
+        const p1 = {name: "猪猪侠", gender: "男", age: 18}
+        const p2 = {name: "帝皇铠甲", gender: "女", age: 15}
+        const p3 = {name: "霹雳火", gender: "男", age: 20}
+
+        // 渲染虚拟DOM
+        ReactDOM.render(<Person {...p1} />, document.getElementById("app00"))
+        ReactDOM.render(<Person {...p2} />, document.getElementById("app01"))
+        ReactDOM.render(<Person {...p3} />, document.getElementById("app02"))
+
+        /**
+         *  ...[对象变量名] 
+         *      这中方式写法就是将当前变量对象的所有属性便利类似，类似于Spring中的属性copy赋值
+         *      也就是说，两个对象的属性名完全一致则可以完成属性的值拷贝，这里类似，只不过他在去取值的时候
+         *      如：传递的p1有 name和age 那就只能在props中通过name和age属性才能够获取到当前属性的值
+         *  注意：
+         *      这种展开运算符要想在React中使用需要先引入React然后还需要引入Babel才可以使用这种方式。当然默认情况都会引入所以都能使用
+         *      并且他仅仅适用于标签运算符中，其他任何地方就算写了也将不会起到任何作用                  
+         */
+
+    </script>
+</body>
+</html>

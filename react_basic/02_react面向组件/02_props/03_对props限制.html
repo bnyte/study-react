@@ -31,7 +31,7 @@
                         <ul>
                             <li>姓名：{this.props.name}</li>
                             <li>性别：{this.props.gender}</li>
-                            <li>年龄：{this.props.age}</li>
+                            <li>年龄：{this.props.age + 1}</li>
                         </ul>
                     </div>
                 )
@@ -39,7 +39,7 @@
         }
 
         // 渲染虚拟DOM
-        ReactDOM.render(<Person name="猪猪侠" gender="男" age="18"/>, document.getElementById("app00"))
+        ReactDOM.render(<Person name="猪猪侠" gender="男" age={18}/>, document.getElementById("app00"))
         ReactDOM.render(<Person name="帝皇铠甲" gender="女" age="15"/>, document.getElementById("app01"))
         ReactDOM.render(<Person name="霹雳火" gender="男" age="20"/>, document.getElementById("app02"))
 
