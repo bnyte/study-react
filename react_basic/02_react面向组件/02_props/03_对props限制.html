@@ -18,6 +18,8 @@
     <script src="../../js/react-dom.development.js" type="text/javascript"></script>
     <!-- 引入babel用于将jsx转换为js -->
     <script src="../../js/babel.min.js" type="text/javascript"></script>
+    <!-- 引入prop-types 用于对组件属性的限制 -->
+    <script src="../../js/prop-types.js" type="text/javascript"></script>
 
     <script type="text/babel">
         // 创建组件
@@ -38,11 +40,28 @@
             }
         }
 
-        // 渲染虚拟DOM
-        ReactDOM.render(<Person name="猪猪侠" gender="男" age={18}/>, document.getElementById("app00"))
-        ReactDOM.render(<Person name="帝皇铠甲" gender="女" age="15"/>, document.getElementById("app01"))
-        ReactDOM.render(<Person name="霹雳火" gender="男" age="20"/>, document.getElementById("app02"))
+        // 对属性做类型和必填约束
+        Person.propTypes = {
+            name: PropTypes.string.isRequired, // name属性必须是字符串 并且是必填
+            gender: PropTypes.string, // gender属性必须是字符串
+            age: PropTypes.number, // age属性必须是数值
+            speck: PropTypes.func // 限制speck必须是函数
+        }
 
+        // 对属性设置默认值, 需要注意的是如果传入的值是null那么不算空值，只有在为undefined的时候才算空值，此时才会设置默认值
+        Person.defaultProps = {
+            gender: "男男女女" // gender属性默认值为男男女女
+        }
+
+        let p = {name: "猪猪侠",  age: 18}
+        // 渲染虚拟DOM
+        ReactDOM.render(<Person {...p} />, document.getElementById("app00"))
+        ReactDOM.render(<Person speck="speck" name="帝皇铠甲" gender={null} age={15}/>, document.getElementById("app01"))
+        ReactDOM.render(<Person name="霹雳火" gender="男" age={20}/>, document.getElementById("app02"))
+
+        function speck() {
+
+        }
     </script>
 </body>
 </html>
