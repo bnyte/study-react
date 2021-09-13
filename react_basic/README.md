@@ -1037,7 +1037,7 @@ prop-types.js
 
 ## 值改变事件(onChange)
 
-使用语法：`onChange=[行为]'，如下：
+使用语法：`onChange=[行为]`，如下：
 
 ```html
 <!-- 这里的this.showOnChange就是当前实例的showOnChange()函数 -->
