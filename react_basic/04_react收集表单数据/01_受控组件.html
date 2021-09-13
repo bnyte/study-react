@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+
+            // 初始话状态
+            state = {
+                username: "",
+                password: ""
+            }
+
+            render() {
+                return (
+                    <div>                    
+                        <form action="https://blog.bytestroll.com/" onSubmit={this.handlerSubmit}>
+                            用户名：<input onChange={this.saveUsername} type="text" name="username" /> <br /> <br />
+                            密码：<input onChange={this.savePassword} type="text" name="password" />  <br /> <br />
+                            <button>提交</button>  
+                        </form>
+                    </div>
+                )
+            }
+
+            // 显示onChange事件改变
+            saveUsername = (envent) => {
+                this.setState({username: envent.target.value})
+            }
+
+            // 
+            savePassword = (envent) => {
+                this.setState({password: envent.target.value})
+            }
+
+            // 处理表单提交函数
+            handlerSubmit = (event) => {
+                const {username, password} = this.state
+                event.preventDefault() // 阻止表单自动提交
+                console.log("username >> " + username + ", password >> " + password);
+            }
+
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <input ref={(current) => {this.clickData = current}} id="clickData" placeholder="输入文字点击按钮弹出" />
+                        <button onClick={this.showClickData}>按钮</button>
+                        <input ref={(current) => {this.mouseData = current}} id="mouseData" onBlur={this.showMouseData} placeholder="当失去焦点时弹出" />
+                    </div>
+                )
+            }
+
+            // 点击时间
+            showClickData = () => {
+                // 因为这里在赋值的时候给的值是当前元素的真是DOM对象，所以这里拿元素对象的value的时候也是通过真实dom语法去获取的，因为此时我们在操作一个真实DOM
+                const {clickData} = this
+
+                console.log("clickData >> " + clickData.value);
+            }
+
+            // 鼠标失去焦点事件
+            showMouseData = () => {
+                const {mouseData} = this
+
+                console.log("mouseData >> " + mouseData.value);
+            }
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>

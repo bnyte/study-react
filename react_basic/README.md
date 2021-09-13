@@ -600,12 +600,420 @@ prop-types.js
 
 ## 回调形式的ref
 
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
 
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+            render() {
+                return (
+                    <div>
+                    // 使用回调ref的时候会将当前操作的DOM的真实DOM对象作为参数的形式传递过来
+                        <input ref={(current) => {this.clickData = current}} id="clickData" placeholder="输入文字点击按钮弹出" />
+                        <button onClick={this.showClickData}>按钮</button>
+                        <input ref={(current) => {this.mouseData = current}} id="mouseData" onBlur={this.showMouseData} placeholder="当失去焦点时弹出" />
+                    </div>
+                )
+            }
+
+            // 点击时间
+            showClickData = () => {
+                // 因为这里在赋值的时候给的值是当前元素的真是DOM对象，所以这里拿元素对象的value的时候也是通过真实dom语法去获取的，因为此时我们在操作一个真实DOM
+                const {clickData} = this
+
+                console.log("clickData >> " + clickData.value);
+            }
+
+            // 鼠标失去焦点事件
+            showMouseData = () => {
+                const {mouseData} = this
+
+                console.log("mouseData >> " + mouseData.value);
+            }
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
+
+### ref调用次数解决
+
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+            render() {
+                return (
+                    <div>
+                        {
+                            // 使用以下方式的话在React实例对象被做任何修改操作的话那么这个匿名函数会被执行两次，如果需要解决就直接把这个匿名函数生命在类的本身就可以了，但是这个问题是没有任何关系的
+                            // <input ref={(current) => {this.clickData = current}} id="clickData" placeholder="输入文字点击按钮弹出" />
+                            // 以下为解决办法
+                        }                        
+                        <input ref={this.saveClickData} id="clickData" placeholder="输入文字点击按钮弹出" />
+                        <button onClick={this.showClickData}>按钮</button>
+                        <input ref={(current) => {this.mouseData = current}} id="mouseData" onBlur={this.showMouseData} placeholder="当失去焦点时弹出" />
+                    </div>
+                )
+            }
+
+            // 参数为React回调时传入的当前操作真实DOM对象
+            saveClickData = (current) => {
+                this.clickData = current
+            }
+
+            // 点击时间
+            showClickData = () => {
+                // 因为这里在赋值的时候给的值是当前元素的真是DOM对象，所以这里拿元素对象的value的时候也是通过真实dom语法去获取的，因为此时我们在操作一个真实DOM
+                const {clickData} = this
+
+                console.log("clickData >> " + clickData.value);
+            }
+
+            // 鼠标失去焦点事件
+            showMouseData = () => {
+                const {mouseData} = this
+
+                console.log("mouseData >> " + mouseData.value);
+            }
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
+
+## react收集表单数据
+
+### 非受控组件
+
+> 就是说拿到的数据是临时的，没有将数据保存
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+
+            render() {
+                return (
+                    <div>                    
+                        <form action="https://blog.bytestroll.com/" onSubmit={this.handlerSubmit}>
+                            用户名：<input ref={current => this.username = current} type="text" name="username" />
+                            密码：<input ref={current => this.password = current} type="text" name="password" />  
+                            <button>提交</button>  
+                        </form>
+                    </div>
+                )
+            }
+
+            // 处理表单提交函数
+            handlerSubmit = (event) => {
+                const {username, password} = this
+                event.preventDefault() // 阻止表单自动提交
+                console.log("username >> " + username.value + ", password >> " + password.value);
+            }
+
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
+
+### 受控组件
+
+> 其实受控组件等同于`VUE`中的`v-model双向绑定`
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+
+            // 初始话状态
+            state = {
+                username: "",
+                password: ""
+            }
+
+            render() {
+                return (
+                    <div>                    
+                        <form action="https://blog.bytestroll.com/" onSubmit={this.handlerSubmit}>
+                            用户名：<input onChange={this.saveUsername} type="text" name="username" /> <br /> <br />
+                            密码：<input onChange={this.savePassword} type="text" name="password" />  <br /> <br />
+                            <button>提交</button>  
+                        </form>
+                    </div>
+                )
+            }
+
+            // 显示onChange事件改变
+            saveUsername = (envent) => {
+                this.setState({username: envent.target.value})
+            }
+
+            // 
+            savePassword = (envent) => {
+                this.setState({password: envent.target.value})
+            }
+
+            // 处理表单提交函数
+            handlerSubmit = (event) => {
+                const {username, password} = this.state
+                event.preventDefault() // 阻止表单自动提交
+                console.log("username >> " + username + ", password >> " + password);
+            }
+
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
 
 ### 小结
 
 - 在React中的ref可以把他当作一个`html`标签中的`id`属性，他是为当前`虚拟DOM`做标识的方式
 - 当通过`ref`去获取`虚拟DOM时`拿到的对象是真真实实的`原生DOM`
+- 当通过回调方式的ref时，此时操作的DOM对象是真实的DOM元素对象
+- 在直接使用匿名方法的形式使用ref回调在实例对象被更新改变操作之后会做两次调用，但是如果使用定义函数并且在类的自身中他是不会出现这种情况，不过他们是没有区别的
+
+## 高阶函数
+
+### 高阶函数-函数的柯里化
+
+> 函数的柯里化也就是说调用了一个函数之后，这个被调用的函数`返回值`或`形参`是一个函数则说明就是一个高阶函数，而函数的柯里化就是通过外层的函数来定义一次之后，在由`返回的函数返回值`或`形参函数`来具体执行这就是`函数的柯里化`
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+
+            /**
+             * 高阶函数：如果满足以下两个中的任意一个条件则说明是一个高阶函数
+             *      1. 如某函数的方法参数是一个函数则是一个高阶函数
+             *      2. 如某函数的方法返回值是一个函数则是一个高阶函数
+             * 函数柯里化：通过函数调用继续返回函数的方式，实现多次接受参数最后统一处理的函数编码形式
+             */
+
+            // 初始话状态
+            state = {
+                username: "",
+                password: ""
+            }
+
+            render() {
+                return (
+                    <div>                    
+                        <form action="https://blog.bytestroll.com/" onSubmit={this.handlerSubmit}>
+                            用户名：<input onChange={this.saveLoginData("username")} type="text" name="username" /> <br /> <br />
+                            密码：<input onChange={this.saveLoginData("password")} type="text" name="password" />  <br /> <br />
+                            <button>提交</button>  
+                        </form>
+                    </div>
+                )
+            }
+
+            // 显示onChange事件改变
+            saveLoginData = (dataName) => {
+                // react实际调用的函数
+                return (envent) => {
+                    this.setState({[dataName]: envent.target.value})
+                }
+            }
+
+            // 处理表单提交函数 
+            handlerSubmit = (event) => {
+                const {username, password} = this.state
+                event.preventDefault() // 阻止表单自动提交
+                console.log("username >> " + username + ", password >> " + password);
+            }
+
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
+
+### 不适用柯里化实现
+
+> 本质上也很简单，看代码就懂了
+
+```html
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+
+            /**
+             * 高阶函数：如果满足以下两个中的任意一个条件则说明是一个高阶函数
+             *      1. 如某函数的方法参数是一个函数则是一个高阶函数
+             *      2. 如某函数的方法返回值是一个函数则是一个高阶函数
+             * 函数柯里化：通过函数调用继续返回函数的方式，实现多次接受参数最后统一处理的函数编码形式
+             */
+
+            // 初始话状态
+            state = {
+                username: "",
+                password: ""
+            }
+
+            render() {
+                return (
+                    <div>                    
+                        <form action="https://blog.bytestroll.com/" onSubmit={this.handlerSubmit}>
+                            用户名：<input onChange={(event) => {this.saveLoginData("username", event)}} type="text" name="username" /> <br /> <br />
+                            密码：<input onChange={(event) => {this.saveLoginData("password", event)}} type="text" name="password" />  <br /> <br />
+                            <button>提交</button>  
+                        </form>
+                    </div>
+                )
+            }
+
+            // 显示onChange事件改变
+            saveLoginData = (dataName, event) => {
+                this.setState({[dataName]: event.target.value})
+            }
+
+            // 处理表单提交函数 
+            handlerSubmit = (event) => {
+                const {username, password} = this.state
+                event.preventDefault() // 阻止表单自动提交
+                console.log("username >> " + username + ", password >> " + password);
+            }
+
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
 
 # React中的事件
 
@@ -623,6 +1031,15 @@ prop-types.js
 使用语法：`onBlur=[行为]`，如下：
 
 ```html
-<!-- 这里的this.clickData就是当前实例的clickData()函数 -->
+<!-- 这里的this.mouseData就是当前实例的mouseData()函数 -->
 <input ref="mouseData" id="mouseData" onBlur={this.mouseData} placeholder="当失去焦点时弹出" />
+```
+
+## 值改变事件(onChange)
+
+使用语法：`onChange=[行为]'，如下：
+
+```html
+<!-- 这里的this.showOnChange就是当前实例的showOnChange()函数 -->
+测试onChange：<input onChange={this.showOnChange} type="text" /> <br /> <br />
 ```
