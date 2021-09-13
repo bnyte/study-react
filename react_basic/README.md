@@ -220,6 +220,8 @@ prop-types.js
 </script>
 ```
 
+## state
+
 > 类式组件-复杂组件(有状态组件)
 
 ```javascript
@@ -270,6 +272,10 @@ prop-types.js
 
 </script>
 ```
+
+## 精简state
+
+
 
 ## 小结
 
