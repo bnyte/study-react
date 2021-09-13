@@ -275,7 +275,59 @@ prop-types.js
 
 ## 精简state
 
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
 
+    <script type="text/babel">
+        class HelloComponent extends React.Component {
+
+            state = {"date": new Date(), "userName": "猪猪侠", "isLook": true, "lookName": "帝皇铠甲"}
+
+            render() {
+                // 不能直接将date对象放入React虚拟DOM中，必须放置一个字符串，否则React是无法完成解析的
+                const currentTime = new Date().toDateString()
+                return (
+                    <h1 onClick={this.look}>
+                        现在是 {currentTime}
+                        {
+                            this.state.isLook ? this.state.lookName : this.state.userName
+                        }
+                    </h1>
+                )
+            }
+
+            look = ()=> {
+                this.setState({"isLook": !this.state.isLook})
+                this.state.isLook ? this.state.lookName : this.state.userName
+                console.log(this.state.isLook);
+            }
+
+            
+        }
+
+        ReactDOM.render(<HelloComponent />, document.getElementById("app"))
+
+    </script>
+</body>
+</html>
+```
 
 ## 小结
 
@@ -284,3 +336,293 @@ prop-types.js
 - 在React中所有类组件必须继承`React.Component`这个类。
 - 在React中的组件有一个`render()`这是React将`render()`的返回值作为虚拟DOM，然后将这个虚拟DOM转换为真实的DOM对象，需要注意的是：每调用一次`setState()`API都会隐式调用一次`render()`
 - 在React中的`setState()`是追加方式更新值，类似与`Java中的Map`集合的`put()`
+- 不能直接将JS对象放入React虚拟DOM中，因为React渲染时无法完成对JS对象的解析
+
+## props
+
+### props的基本使用
+
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    <div id="app01"></div>
+    <div id="app02"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Person extends React.Component {
+  
+            // 渲染虚拟DOM核心方法
+            render() {
+                console.log(this.props);
+                return (
+                    <div>
+                        <ul>
+                            <li>姓名：{this.props.name}</li>
+                            <li>性别：{this.props.gender}</li>
+                            <li>年龄：{this.props.age}</li>
+                        </ul>
+                    </div>
+                )
+            }
+        }
+
+        // 渲染虚拟DOM
+        ReactDOM.render(<Person name="猪猪侠" gender="男" age="18"/>, document.getElementById("app00"))
+        ReactDOM.render(<Person name="帝皇铠甲" gender="女" age="15"/>, document.getElementById("app01"))
+        ReactDOM.render(<Person name="霹雳火" gender="男" age="20"/>, document.getElementById("app02"))
+
+    </script>
+</body>
+</html>
+```
+
+### 批量传递props
+
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    <div id="app01"></div>
+    <div id="app02"></div>
+    
+    <!-- 引入react的核心库 -->·
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Person extends React.Component {
+  
+            // 渲染虚拟DOM核心方法
+            render() {
+                console.log(this.props);
+                const {name, gender, age} = this.props
+                return (
+                    <div>
+                        <ul>
+                            <li>姓名：{this.props.name}</li>
+                            <li>性别：{this.props.gender}</li>
+                            <li>年龄：{this.props.age + 1}</li>
+                        </ul>
+                    </div>
+                )
+            }
+        }
+
+        const p1 = {name: "猪猪侠", gender: "男", age: 18}
+        const p2 = {name: "帝皇铠甲", gender: "女", age: 15}
+        const p3 = {name: "霹雳火", gender: "男", age: 20}
+
+        // 渲染虚拟DOM
+        ReactDOM.render(<Person {...p1} />, document.getElementById("app00"))
+        ReactDOM.render(<Person {...p2} />, document.getElementById("app01"))
+        ReactDOM.render(<Person {...p3} />, document.getElementById("app02"))
+
+        /**
+         *  ...[对象变量名] 
+         *      这中方式写法就是将当前变量对象的所有属性便利类似，类似于Spring中的属性copy赋值
+         *      也就是说，两个对象的属性名完全一致则可以完成属性的值拷贝，这里类似，只不过他在去取值的时候
+         *      如：传递的p1有 name和age 那就只能在props中通过name和age属性才能够获取到当前属性的值
+         *  注意：
+         *      这种展开运算符要想在React中使用需要先引入React然后还需要引入Babel才可以使用这种方式。当然默认情况都会引入所以都能使用
+         *      并且他仅仅适用于标签运算符中，其他任何地方就算写了也将不会起到任何作用                  
+         */
+
+    </script>
+</body>
+</html>
+```
+
+### 对props做限制
+
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    <div id="app01"></div>
+    <div id="app02"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+    <!-- 引入prop-types 用于对组件属性的限制 -->
+    <script src="../../js/prop-types.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Person extends React.Component {
+  
+            // 渲染虚拟DOM核心方法
+            render() {
+                console.log(this.props);
+                return (
+                    <div>
+                        <ul>
+                            <li>姓名：{this.props.name}</li>
+                            <li>性别：{this.props.gender}</li>
+                            <li>年龄：{this.props.age + 1}</li>
+                        </ul>
+                    </div>
+                )
+            }
+        }
+
+        // 对属性做类型和必填约束
+        Person.propTypes = {
+            name: PropTypes.string.isRequired, // name属性必须是字符串 并且是必填
+            gender: PropTypes.string, // gender属性必须是字符串
+            age: PropTypes.number, // age属性必须是数值
+            speck: PropTypes.func // 限制speck必须是函数
+        }
+
+        // 对属性设置默认值, 需要注意的是如果传入的值是null那么不算空值，只有在为undefined的时候才算空值，此时才会设置默认值
+        Person.defaultProps = {
+            gender: "男男女女" // gender属性默认值为男男女女
+        }
+
+        let p = {name: "猪猪侠",  age: 18}
+        // 渲染虚拟DOM
+        ReactDOM.render(<Person {...p} />, document.getElementById("app00"))
+        ReactDOM.render(<Person speck="speck" name="帝皇铠甲" gender={null} age={15}/>, document.getElementById("app01"))
+        ReactDOM.render(<Person name="霹雳火" gender="男" age={20}/>, document.getElementById("app02"))
+
+        function speck() {
+
+        }
+    </script>
+</body>
+</html>
+```
+
+### 小结
+
+- props是可以通过方法参数传递的。
+- props是可以通过展开运算符直接将一个对象传入的，React会在解析的时候将对象所对应的对象属性值全部给到props
+- 对props做限制的时候必须遵循React规定的格式去限制，否则不会起到效果
+
+## refs
+
+### 字符串类型的refs
+
+```javascript
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_复杂式组件</title>
+</head>
+<body>
+    <!-- React操作容器 -->
+    <div id="app00"></div>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../../js/babel.min.js" type="text/javascript"></script>
+
+    <script type="text/babel">
+        // 创建组件
+        class Demo extends React.Component {
+            render() {
+                return (
+                    <div>
+                        <input ref="clickData" id="clickData" placeholder="输入文字点击按钮弹出" />
+                        <button onClick={this.clickData}>按钮</button>
+                        <input ref="mouseData" id="mouseData" onBlur={this.mouseData} placeholder="当失去焦点时弹出" />
+                    </div>
+                )
+            }
+
+            // 点击时间
+            clickData = () => {
+                const {clickData} = this.refs
+                console.log(this);
+                alert(clickData.value)
+            }
+
+            // 鼠标失去焦点事件
+            mouseData = () => {
+                const {mouseData} = this.refs
+                console.log(this);
+                alert(mouseData.value)
+            }
+        }
+
+        // 渲染组件
+        ReactDOM.render(<Demo />, document.getElementById("app00"))
+    </script>
+</body>
+</html>
+```
+
+## 回调形式的ref
+
+
+
+### 小结
+
+- 在React中的ref可以把他当作一个`html`标签中的`id`属性，他是为当前`虚拟DOM`做标识的方式
+- 当通过`ref`去获取`虚拟DOM时`拿到的对象是真真实实的`原生DOM`
+
+# React中的事件
+
+## 点击事件(onClick)
+
+使用语法：`onClick=[行为]`，如下：
+
+```html
+<!-- 这里的this.clickData就是当前实例的clickData()函数 -->
+<button onClick={this.clickData}>按钮</button>
+```
+
+## 失去焦点事件(onBlur)
+
+使用语法：`onBlur=[行为]`，如下：
+
+```html
+<!-- 这里的this.clickData就是当前实例的clickData()函数 -->
+<input ref="mouseData" id="mouseData" onBlur={this.mouseData} placeholder="当失去焦点时弹出" />
+```
