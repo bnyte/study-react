@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02_react生命周期(旧)</title>
+    
+    <!-- 引入react的核心库 -->
+    <script src="../js/react.development.js" type="text/javascript"></script>
+    <!-- 引入react-dom用于支持react操作dom -->
+    <script src="../js/react-dom.development.js" type="text/javascript"></script>
+    <!-- 引入babel用于将jsx转换为js -->
+    <script src="../js/babel.min.js" type="text/javascript"></script>
+</head>
+<body>
+    <div id="app"></div>
+    <script type="text/babel">
+        class Life extends React.Component {
+
+            state = {result: 0}
+
+            increase = () => {
+                this.setState({result: this.state.result + 1})
+            }
+
+            render() {
+                return (
+                    <div>
+                        <h1>当前和为{this.state.result}</h1>
+                        <button onClick={this.increase}>点我+1</button>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<Life />, document.getElementById("app"))
+    </script>
+</body>
+</html>
