@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import InputFlower from './components/inputFlower'
-import './App.css'
+import './App.less'
+import List from './components/list'
 
 export default class App extends Component {
     render() {
@@ -8,6 +9,7 @@ export default class App extends Component {
             <div className="appBox">
                 <hr />
                 <InputFlower />
+                <List />
             </div>
         )
     }

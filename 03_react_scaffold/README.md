@@ -80,7 +80,7 @@ yarn.lock               ----
 > 安装less和less-loader插件包
 
 ```shell
-yarn add less less-loader
+yarn add less less-loader@7.0
 ```
 
 > 显示webpack配置文件
@@ -90,3 +90,42 @@ yarn add less less-loader
 ```shell
 yarn eject
 ```
+
+> 配置`config -> webpack.config.js`
+
+- 搜索`sassModuleRegex`然后在后面添加两行代码
+
+```javascript
+const lessRegex = /\.(less)$/;
+const lessModuleRegex = /\.module\.(less)$/;
+```
+
+- 搜索`sass-loader`大概在`461行`模仿代码中提供的`sassRegex`代码，添加如下代码
+
+```javascript
+{
+    test: lessRegex,
+    exclude: lessModuleRegex,
+    use: getStyleLoaders(
+        {
+            importLoaders: 2,
+            sourceMap: isEnvProduction && shouldUseSourceMap,
+        },
+        "less-loader"
+    ),
+    sideEffects: true,
+},
+{
+    test: lessModuleRegex,
+    use: getStyleLoaders(
+        {
+            importLoaders: 2,
+            sourceMap: isEnvProduction && shouldUseSourceMap,
+            modules: true,
+            getLocalIdent: getCSSModuleLocalIdent,
+        },
+        "less-loader"
+    ),
+},
+```
+
