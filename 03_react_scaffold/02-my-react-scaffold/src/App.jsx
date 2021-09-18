@@ -1,13 +1,14 @@
-import React, {Component} from "react";
-import ReactDOM from "react-dom";
+import React, { Component } from 'react'
+import InputFlower from './components/inputFlower'
+import './App.css'
 
-/**
- * 创建组件
- */
 export default class App extends Component {
     render() {
         return (
-            <div>Hello React</div>
+            <div className="appBox">
+                <hr />
+                <InputFlower />
+            </div>
         )
     }
-} 
+}

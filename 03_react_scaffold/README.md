@@ -74,3 +74,19 @@ package.json            ----
 README.md               ----
 yarn.lock               ----
 ```
+
+# React脚手架配置less
+
+> 安装less和less-loader插件包
+
+```shell
+yarn add less less-loader
+```
+
+> 显示webpack配置文件
+
+注意：执行这条命令之前git暂存区必须为空，也就是必须提交代码才可以否则会报错
+
+```shell
+yarn eject
+```
