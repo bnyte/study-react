@@ -1327,9 +1327,9 @@ exports.isSuspense=function(a){return t(a)===p};
 'use strict';
 
 if (process.env.NODE_ENV === 'production') {
-  module.exports = require('./cjs/react-is.production.min.js');
+  module.exports = require('./cjs/react-is.production.min.js.js');
 } else {
-  module.exports = require('./cjs/react-is.development.js');
+  module.exports = require('./cjs/react-is.development.js.js');
 }
 
 }).call(this,require('_process'))
