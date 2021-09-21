@@ -129,3 +129,35 @@ const lessModuleRegex = /\.module\.(less)$/;
 },
 ```
 
+# React配置代理的两种方式
+
+## 修改`package.json`
+
+> 在`package.json`中添加如下配置
+
+```json
+{
+    "proxy": "ip:port"
+}
+```
+
+## 在`src`目录下新建文件`setupProxy.js`
+
+```javascript
+const proxy = require('http-proxy-middleware')
+
+module.exports = function(app) {
+    app.use(
+        proxy('/api1', { // 遇见以当前指定的`/api1`的请求则标识为走代理
+            target: "http://localhost:8080", // 请求转发的目标地址
+            changeOrigin: true, // 控制服务器收到的请求头中Host字段值
+            pathRewrite: {"^/api1": ""} // 重写请求路径
+        }),
+        proxy('/api1', {
+            target: "http://localhost:8081",
+            changeOrigin: true,
+            pathRewrite: {"^/api2": ""}
+        })
+    )
+}
+```
