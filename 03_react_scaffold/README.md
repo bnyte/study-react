@@ -162,6 +162,10 @@ module.exports = function(app) {
 }
 ```
 
+# React的组件之间通信
+
+> 组件库`yarn add pubsubjs`
+
 # React路由
 
 ## 下载`react-router-dom`
@@ -172,11 +176,11 @@ yarn add react-router-dom
 
 ## Link(导航)
 
-> Link可以代表`a标签`，但是需要注意的是在编写`Link`标签替代`a`标签的时候，在`a`标签中的`href`要转换为`to`属性，其他一致
+> Link可以代表`a标签`，但是需要注意的是在编写`Link`标签替代`a`标签的时候，在`a`标签中的`href`要转换为`to`属性，其他一致, 如果添加`replace`属性则说明使用替换栈顶的方式跳转， 默认是用的`push`压栈模式
 
 ## Route(展示)
 
-> 使用该标签他是单闭合的，只需要给属性`path="url"`和`component={组件名}`就可以完成了
+> 使用该标签他是单闭合的，只需要给属性`path="url"`和`component={组件名}`就可以完成了，在注册路由的时候只需要添加`exact`属性就能开启严格匹配(必须完全一致)
 
 ## NavLink(导航)
 
@@ -185,6 +189,33 @@ yarn add react-router-dom
 ## Switch(条件)
 
 > 使用该标签用于在`注册路由`的时候来进行匹配规则，这里的匹配规则就是，在该标签体中的所有标签都会被标识为`一次匹配`也就是说，只要匹配到一次了那就不会在继续往下继续匹配了，如果没有匹配会继续匹配，知道匹配完毕或匹配到一个之后结束。`用于包裹注册路由时使用`
+
+## Redirect(重定向，兜底)
+
+> 当所有注册的路由都没有被匹配上的时候此时会去到这个`Redirect`指定的`to`属性地址值，注意：该标签需要写在所有的`Route`的最后一行
+
+## 路由组件接收参数
+
+- *params*: 直接在路由中使用`:key`的方式就会被自动映射到`props.match.params`中，并且key就是`url中的:key`，`value就是uri中的值`
+
+- *search*: 引入官方下载好的库`querystring`, 通过`parse和JSON转换为字符串的方法解析即可`，注意需要使用方法`slice(1)`去除第一个问号，值在`props.location.search`, 该方式正常传入即可不需要声明接受
+
+- *state*: 向路由组件传递`state`参数(与组件中的state没有任何关系)，传递方式是一个对象如下代码，值在`props.location.state`, 该方式正常传入即可不需要声明接受
+
+```
+{
+    pathname: "请求url",
+    state: {
+        id: "参数值",
+        ...
+        name: "参数值"
+        }
+}
+```
+
+## 一般组件具有路由组件功能
+
+> 引入`react-router-dom`中的`withRouter`方法，通过该方法传入一个组件名，返回的对象就是一个加工之后的组件，此时就会具备路由组件所具备的功能
 
 ## 小结
 
