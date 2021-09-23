@@ -1,7 +1,10 @@
 import React, { Component } from 'react'
 import { Select, Button, message } from "antd"
 
+import {calculatorStore} from "../../redux/store"
+
 import "antd/dist/antd.css"
+import { decrement, increment, incrementAsync } from '../../redux/calculator_action'
 
 const {Option} = Select
 
@@ -43,6 +46,8 @@ export default class Calculator extends Component {
         if (incrementNum === 0) {
             return message.warning('当前添加的数为0，这并不会发生任何改变')
         }
+        // 值更新, 该API会调用showReducer
+        calculatorStore.dispatch(increment(incrementNum))
     }
 
     decrase = () => {
@@ -50,12 +55,19 @@ export default class Calculator extends Component {
         if (incrementNum === 0) {
             return message.warning('当前减少的数为0，这并不会发生任何改变')
         }
+        // 值更新, 该API会调用showReducer
+        calculatorStore.dispatch(decrement(incrementNum))
     }
 
     handleOddNumber = () => {
+        if (calculatorStore.getState() % 2 !== 0) {
+            // 值更新, 该API会调用showReducer
+            calculatorStore.dispatch(increment(this.state.incrementNum))
+        }  
     }
 
     handleAsyncIncr = () => {
+        calculatorStore.dispatch(incrementAsync(this.state.incrementNum, 500))
     }
 
 }

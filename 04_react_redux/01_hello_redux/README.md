@@ -118,3 +118,52 @@ import thunk from "redux-thunk" // 引入异步中间件
 // 通过reducer创建store并暴漏出去
 const calculatorStore = createStore(calculatorReducer, applyMiddleware(thunk)) // 创建store的时候让该store支持异步
 ```
+
+## 使用官方的`react-redux`
+
+- 下载redux
+
+```
+yarn add react-redux
+```
+
+- 配置redux
+
+> 在`src`下创建`containers`文件夹，该文件夹用于创建容器组件
+
+- 创建容器组件
+
+```javascript
+// 引入UI组件
+import CalculatorUI from "../../components/Calculator";
+
+// 引入connect连接UI组件和redux
+import {connect} from "react-redux"
+
+// 使用connect创建容器组件并暴露
+export default connect()(CalculatorUI)
+```
+
+- 在`App.jsx`中不在引入UI组件，而是我们创建的容器组件，并且需要注意的是, 要将store通过props的方式传入, props的key为store
+
+```javascript
+import React, { Component } from 'react'
+
+import Calculator from './containers/Calculator'
+import Show from './containers/Show'
+
+import {calculatorStore} from "./redux/store"
+
+export default class App extends Component {
+
+    render() {
+        return (
+            <div>
+                <Show store={calculatorStore} />
+                <Calculator store={calculatorStore} />
+            </div>
+        )
+    }
+
+}
+```
