@@ -1,70 +1,120 @@
-# Getting Started with Create React App
+# Redux
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## 下载Redux
 
-## Available Scripts
+```
+yarn add redux
+```
 
-In the project directory, you can run:
+## 快速开始
 
-### `yarn start`
+### 创建redux文件夹
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+> 在`src`文件夹下创建`redux`文件夹用于管理所有的`redux`
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 编写`reducer`
 
-### `yarn test`
+- 在`src/redux`文件夹下创建文件`calculator_reducer.js`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```javascript
+/**
+ * 1. 该文件是用于创建一个为Calculator组件服务的reducer，reducer的本质上是一个函数
+ * 2. reducer函数会接受到两个参数，分别为：之前的状态(preState)，动作对象(action{type, data})
+ */
+const initValue = 0
+// preState = initValue 意思是当前一个值为undefined的时候则使用默认值 initValue (初始化的时候就是未定义)，这里返回的值就是在其他组件中使用getState()API的时候调取获取到的返回值
+export default function calculatorReducer(preState = initValue, action) {
+    console.log("preState", preState);
+    // 从action对象中获取数据
+    const {type, data} = action
+    // 根据type决定如何加工数据
+    switch (type) {
+        case "increment": // 加法
+            return preState + data
+        case "decrement": // 剑法
+            return preState - data     
+        default:
+            return preState
+    }
+}
+```
 
-### `yarn build`
+> 注意：`action`是一个对象，需要接收一个`String:type`和`Object:data`，`calculatorReducer`该方法返回值就是调用`getState()`时获取到的返回值
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 编写`store.js`
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- 在`src/redux`文件夹下创建文件`store.js`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+```javascript
+/**
+ * 该文见用于暴露一个store对象，整个应用只有一个store对象
+ */
+import {createStore} from "redux"
 
-### `yarn eject`
+// 引入为Calcuator服务的reducer
+import calculatorReducer from "./calculator_reducer"
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+// 通过reducer创建store并暴漏出去
+const calculatorStore = createStore(calculatorReducer)
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+export {calculatorStore}
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## redux的API
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+- getState()
 
-## Learn More
+获取当前redux维护的state值
+```
+calculatorStore.getState()
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+- dispatch(Object:action)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+更新当前的state值
+```
+calculatorStore.dispatch({type: "increment", data: incrementNum})
+```
 
-### Code Splitting
+- subscribe()
+订阅，当state值发生改变时调用回调，需要注意的是subscribe()不会重新调用`render()`，也就是不会重新渲染页面，所以需要手动更新，方法很多，在组件中的钩子函数上添加如下代码或直接渲染整个父组件
+```
+// 组件将要挂在的钩子函数
+componentDidMount() {
+    calculatorStore.subscribe(() => {
+        this.setState({})
+    })
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## 安装`redux-thunk`使用`异步action`
 
-### Analyzing the Bundle Size
+```
+yarn add redux-thunk
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- 添加异步action函数
 
-### Making a Progressive Web App
+```javascript
+// 异步action
+export const incrementAsync = (data, time) => {
+    // 这个dispatch是在被回调的时候redux传过来的
+    return (dispatch) => {
+        setTimeout(() => {
+            // 值更新, 该API会调用showReducer
+            dispatch(increment(data))
+        }, time)
+    }
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- 修改`store.js`
+```javascript
+import {createStore, applyMiddleware} from "redux" // 引入applyMiddleware执行异步中间件
 
-### Advanced Configuration
+// 引入异步回调中间件
+import thunk from "redux-thunk" // 引入异步中间件
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+// 通过reducer创建store并暴漏出去
+const calculatorStore = createStore(calculatorReducer, applyMiddleware(thunk)) // 创建store的时候让该store支持异步
+```

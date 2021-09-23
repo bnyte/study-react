@@ -235,7 +235,3 @@ yarn add react-router-dom
 ```
 yarn add antd
 ```
-
-# Redux
-
-## 下载redux

@@ -4,7 +4,6 @@ import { Select, Button, message } from "antd"
 import {calculatorStore} from "../../redux/store"
 
 import "antd/dist/antd.css"
-import { decrement, increment, incrementAsync } from '../../redux/calculator_action'
 
 const {Option} = Select
 
@@ -47,7 +46,7 @@ export default class Calculator extends Component {
             return message.warning('当前添加的数为0，这并不会发生任何改变')
         }
         // 值更新, 该API会调用showReducer
-        calculatorStore.dispatch(increment(incrementNum))
+        calculatorStore.dispatch({type: "increment", data: incrementNum})
     }
 
     decrase = () => {
@@ -56,18 +55,23 @@ export default class Calculator extends Component {
             return message.warning('当前减少的数为0，这并不会发生任何改变')
         }
         // 值更新, 该API会调用showReducer
-        calculatorStore.dispatch(decrement(incrementNum))
+        calculatorStore.dispatch({type: "decrement", data: incrementNum})
     }
 
     handleOddNumber = () => {
         if (calculatorStore.getState() % 2 !== 0) {
             // 值更新, 该API会调用showReducer
-            calculatorStore.dispatch(increment(this.state.incrementNum))
+            calculatorStore.dispatch({type: "increment", data: 1})
         }  
     }
 
     handleAsyncIncr = () => {
-        calculatorStore.dispatch(incrementAsync(this.state.incrementNum, 500))
+        let interval = setInterval(() => {
+            // 值更新, 该API会调用showReducer
+            calculatorStore.dispatch({type: "increment", data: 1})
+            clearInterval(interval)
+        }, 500)
+        
     }
 
 }

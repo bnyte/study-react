@@ -4,7 +4,7 @@ import { Select, Button, message } from "antd"
 import {calculatorStore} from "../../redux/store"
 
 import "antd/dist/antd.css"
-import { decrement, increment, incrementAsync } from '../../redux/calculator_action'
+import { decrement, increment } from '../../redux/calculator_action'
 
 const {Option} = Select
 
@@ -67,7 +67,12 @@ export default class Calculator extends Component {
     }
 
     handleAsyncIncr = () => {
-        calculatorStore.dispatch(incrementAsync(this.state.incrementNum, 500))
+        let interval = setInterval(() => {
+            // 值更新, 该API会调用showReducer
+            calculatorStore.dispatch(increment(this.state.incrementNum))
+            clearInterval(interval)
+        }, 500)
+        
     }
 
 }
