@@ -194,6 +194,13 @@ yarn add react-router-dom
 
 > 当所有注册的路由都没有被匹配上的时候此时会去到这个`Redirect`指定的`to`属性地址值，注意：该标签需要写在所有的`Route`的最后一行
 
+```
+{/* 注册路由 */}
+<Route path="/about" component={About} />
+<Route path="/home" component={Home} />
+<Redirect to="/about" />
+```
+
 ## 路由组件接收参数
 
 - *params*: 直接在路由中使用`:key`的方式就会被自动映射到`props.match.params`中，并且key就是`url中的:key`，`value就是uri中的值`
@@ -220,3 +227,15 @@ yarn add react-router-dom
 ## 小结
 
 - 需要注意的是不管是`Link`还是`Route`都要在`BrowserRouter`或`HashRouter`中，并且要想他们实现功能也必须要是他们都处于一个`BrowserRouter`来进行管理
+
+# 使用组件UI
+
+## 下载组件所需核心库
+
+```
+yarn add antd
+```
+
+# Redux
+
+## 下载redux
