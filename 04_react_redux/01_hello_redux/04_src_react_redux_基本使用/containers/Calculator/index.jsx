@@ -11,18 +11,7 @@ import { increment, decrement, incrementAsync } from "../../redux/calculator_act
  *      一个是传递给UI组件props参数的函数, 注意返回值必须是一个对象，在子组件(UI组件)中通过`this.props`获取相应的参数
  *      一个是用来操作参数的函数
  */
-export default connect(
-        mapStateToProps,
-        /*
-            这是mapDispatchToProps的简写方式, 这种方式只需要其中对象属性的值是一个action
-            那么react-redux就会自动去调用dispatch(action)，然后将指定对象属性中action值作为参数去更新状态
-        */
-        {
-            increment: increment,
-            decrement: decrement,
-            incrementAsync: incrementAsync
-        }
-    )(CalculatorUI)
+export default connect(mapStateToProps, mapDispatchToProps)(CalculatorUI)
 
 /**
  * 传递状态的方法
@@ -33,3 +22,28 @@ export default connect(
 function mapStateToProps(state) {
     return {sum: state}
 }
+
+/**
+ * 操作状态的方法
+ * @param {*} dispatch 用于更新state值的store中的dispatch方法 
+ * @returns 返回值和前面的mapStateToProps形同，返回值必须是一个对象，keykey就是通过props传入的时候接受的属性名
+ *          value是一个函数，用于给UI组件调用来对state坐状态更新，需要注意的是这个函数也是被redux底层调用的
+ *          他会传递一个dispatch()函数返回给我们，此时我们就可以完成对state状态的更新
+ */
+function mapDispatchToProps(dispatch) {
+    return {
+        increment: 
+            (data) => {
+                dispatch(increment(data))
+            },
+        decrement: 
+            (data) => {
+                dispatch(decrement(data))
+            },
+        incrementAsync: 
+            (data, time) => {
+                dispatch(incrementAsync(data, time))
+            }
+    }
+}
+
